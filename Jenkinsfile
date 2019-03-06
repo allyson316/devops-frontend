@@ -1,8 +1,9 @@
-// template de pod que será utilizado no pepiline 
+// template de pod que será utilizado no pepiline
+def LABEL_ID = "qestcode-${UUID.randomUUID().toString()}"
 podTemplate(
     name: 'questcode',
     namespace: 'devops',
-    label: 'questcode', 
+    label: LABEL_ID, 
     containers: [
         // imagem docker
         containerTemplate(args: 'cat', name: 'docker', command: '/bin/sh -c', image: 'docker', ttyEnabled: true),
@@ -15,22 +16,22 @@ podTemplate(
       hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
     ]
 ){
+    // variáveis que serão utilizadas no decorrer da pipeline
+    def REPOS
+    def IMAGE_NAME = "frontend"
+    def IMAGE_VERSION
+    def IMAGE_POXFIX = ""
+    def KUBE_NAMESPACE
+    def ENVIRONMENT
+    def GIT_REPO_URL = "git@github.com:warior-bootcamp/frontend.git"
+    def GIT_BRANCH
+    def HELM_CHART_NAME = "questcode/frontend"
+    def HELM_DEPLOY_NAME
+    def CHARTMUSEUM_REPO_URL = "http://helm-chartmuseum:8080"
+    def NODE_PORT = "30080"
+    
     // Start Pipeline
-    node('questcode') {
-        
-        // variáveis que serão utilizadas no decorrer da pipeline
-        def REPOS
-        def IMAGE_NAME = "frontend"
-        def IMAGE_VERSION
-        def IMAGE_POXFIX = ""
-        def KUBE_NAMESPACE
-        def ENVIRONMENT
-        def GIT_REPO_URL = "git@github.com:warior-bootcamp/frontend.git"
-        def GIT_BRANCH
-        def HELM_CHART_NAME = "questcode/frontend"
-        def HELM_DEPLOY_NAME
-        def CHARTMUSEUM_REPO_URL = "http://helm-chartmuseum:8080"
-        def NODE_PORT = "30080"
+    node(LABEL_ID) {    
         
         // stages = cada estágio da pipeline
         // stage de checagem de alguns parâmetros
