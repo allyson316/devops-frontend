@@ -43,15 +43,16 @@ podTemplate(
             
             // variáveis serão setadas de acordo com a branch: master ou develop
             // se for uma branch de feature sairá do pipeline
-            if(GIT_BRANCH.equals("master")){
+            if(GIT_BRANCH.equals("origin/master")){
                 KUBE_NAMESPACE = "prod"
                 ENVIRONMENT = "production"
-            }else if(GIT_BRANCH.equals("develop")){
+            }else if(GIT_BRANCH.equals("origin/develop")){
                 KUBE_NAMESPACE = "staging"
                 ENVIRONMENT = "staging"
             }else{
-                echo "Não existe pipeline para a branch ${GIT_BRANCH}"
-                exit 0
+                def error = "Não existe pipeline para a branch ${GIT_BRANCH}"
+                echo error
+                throw new Exception(error)
             }
             
             // setando variáveis de Helm e numero de versão da aplicação
